@@ -30,10 +30,10 @@ def mfi(high, low, close, volume, length=None, talib=None, drift=None, offset=No
         tdf = DataFrame({"diff": 0, "rmf": raw_money_flow, "+mf": 0, "-mf": 0})
 
         tdf.loc[(typical_price.diff(drift) > 0), "diff"] = 1
-        tdf.loc[tdf["diff"] == 1, "+mf"] = raw_money_flow
+        tdf.loc[tdf["diff"] == 1, "+mf"] = raw_money_flow.astype('int64')
 
         tdf.loc[(typical_price.diff(drift) < 0), "diff"] = -1
-        tdf.loc[tdf["diff"] == -1, "-mf"] = raw_money_flow
+        tdf.loc[tdf["diff"] == -1, "-mf"] = raw_money_flo.astype('int64')
 
         psum = tdf["+mf"].rolling(length).sum()
         nsum = tdf["-mf"].rolling(length).sum()
