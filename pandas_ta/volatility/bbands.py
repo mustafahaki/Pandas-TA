@@ -6,11 +6,12 @@ from pandas_ta.statistics import stdev
 from pandas_ta.utils import get_offset, non_zero_range, tal_ma, verify_series
 
 
-def bbands(close, length=None, std=None, ddof=0, mamode=None, talib=None, offset=None, **kwargs):
+def bbands(close, length=None, std_upper=None, std_lower=None, ddof=0, mamode=None, talib=None, offset=None, **kwargs):
     """Indicator: Bollinger Bands (BBANDS)"""
     # Validate arguments
     length = int(length) if length and length > 0 else 5
-    std = float(std) if std and std > 0 else 2.0
+    std_upper = float(std_upper) if std_upper and std_upper > 0 else 2.0
+    std_lower = float(std_lower) if std_lower and std_lower > 0 else 2.0
     mamode = mamode if isinstance(mamode, str) else "sma"
     ddof = int(ddof) if ddof >= 0 and ddof < length else 1
     close = verify_series(close, length)
@@ -22,15 +23,16 @@ def bbands(close, length=None, std=None, ddof=0, mamode=None, talib=None, offset
     # Calculate Result
     if Imports["talib"] and mode_tal:
         from talib import BBANDS
-        upper, mid, lower = BBANDS(close, length, std, std, tal_ma(mamode))
+        upper, mid, lower = BBANDS(close, length, std_upper, std_lower, tal_ma(mamode))
     else:
         standard_deviation = stdev(close=close, length=length, ddof=ddof)
-        deviations = std * standard_deviation
+        deviations_upper = std_upper * standard_deviation
+        deviations_lower = std_lower * standard_deviation
         # deviations = std * standard_deviation.loc[standard_deviation.first_valid_index():,]
 
         mid = ma(mamode, close, length=length, **kwargs)
-        lower = mid - deviations
-        upper = mid + deviations
+        lower = mid - deviations_lower
+        upper = mid + deviations_upper
 
     ulr = non_zero_range(upper, lower)
     bandwidth = 100 * ulr / mid
