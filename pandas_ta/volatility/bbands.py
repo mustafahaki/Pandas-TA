@@ -17,7 +17,10 @@ from pandas_ta.utils import (
 
 
 def bbands(
-    close: Series, length: Int = None, std: IntFloat = None, ddof: Int = 0,
+    close: Series, length: Int = None, 
+    std_upper: IntFloat = None, 
+    std_lower: IntFloat = None, 
+    ddof: Int = 0,
     mamode: str = None, talib: bool = None,
     offset: Int = None, **kwargs: DictLike
 ) -> DataFrame:
@@ -31,7 +34,8 @@ def bbands(
     Args:
         close (pd.Series): Series of 'close's
         length (int): The short period. Default: 5
-        std (int): The long period. Default: 2
+        std_upper (float): The long upper period. Default: 2
+        std_lower (float): The long lower period. Default: 2
         ddof (int): Degrees of Freedom to use. Default: 0
         mamode (str): See ``help(ta.ma)``. Default: 'sma'
         talib (bool): If TA Lib is installed and talib is True, Returns
@@ -55,7 +59,8 @@ def bbands(
     if close is None:
         return
 
-    std = v_pos_default(std, 2.0)
+    std_upper = v_pos_default(std_upper, 2.0)
+    std_lower = v_pos_default(std_lower, 2.0)
     ddof = int(ddof) if isinstance(ddof, int) and 0 <= ddof < length else 1
     mamode = v_mamode(mamode, "sma")
     mode_tal = v_talib(talib)
@@ -64,15 +69,16 @@ def bbands(
     # Calculate
     if Imports["talib"] and mode_tal:
         from talib import BBANDS
-        upper, mid, lower = BBANDS(close, length, std, std, tal_ma(mamode))
+        upper, mid, lower = BBANDS(close, length, std_upper, std_lower, tal_ma(mamode))
     else:
         std_dev = stdev(close=close, length=length, ddof=ddof, talib=mode_tal)
-        deviations = std * std_dev
-        # deviations = std * standard_deviation.loc[standard_deviation.first_valid_index():,]
+        deviations_upper = std_upper * std_dev
+        deviations_lower = std_lower * std_dev
+        # deviations = std * std_dev.loc[std_dev.first_valid_index():,]
 
         mid = ma(mamode, close, length=length, talib=mode_tal, **kwargs)
-        lower = mid - deviations
-        upper = mid + deviations
+        lower = mid - deviations_upper
+        upper = mid + deviations_lower
 
     ulr = non_zero_range(upper, lower)
     bandwidth = 100 * ulr / mid
