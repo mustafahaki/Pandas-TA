@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from pandas_ta.utils import get_offset, verify_series
+import pandas as pd
 
 
 def mcgd(close, length=None, offset=None, c=None, **kwargs):
