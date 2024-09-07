@@ -4,7 +4,7 @@ from numpy import nan as npNaN
 from pandas import Series
 
 
-def pvr(close, volume):
+def pvr(close, volume, **kwargs):
     """ Indicator: Price Volume Rank"""
     # Validate arguments
     close = verify_series(close)
