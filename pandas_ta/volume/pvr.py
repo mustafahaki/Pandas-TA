@@ -8,7 +8,8 @@ from pandas_ta.utils import v_drift, v_series
 
 
 def pvr(
-    close: Series, volume: Series, drift: Int = None, **kwargs) -> Series:
+    close: Series, volume: Series, drift: Int = None, **kwargs
+) -> Series:
     """Price Volume Rank
 
     The Price Volume Rank was developed by Anthony J. Macek and is described
