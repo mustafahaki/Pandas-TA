@@ -59,7 +59,6 @@ setup(
         "pandas>=2.2.0",
         "pandas-datareader",
         "scipy>=1.12"
-
     ],
     # List additional groups of dependencies here (e.g. development dependencies).
     # You can install these using the following syntax, for example:
