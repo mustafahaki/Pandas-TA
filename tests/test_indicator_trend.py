@@ -199,3 +199,7 @@ class TestTrend(TestCase):
         result = pandas_ta.vortex(self.high, self.low, self.close)
         self.assertIsInstance(result, DataFrame)
         self.assertEqual(result.name, "VTX_14")
+    def test_bbp(self):
+        result = pandas_ta.bbp(self.high , self.low , self.close)
+        self.assertIsInstance(result , DataFrame)
+        self.assertEqual(result.name , "BBP_13")
