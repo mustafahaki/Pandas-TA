@@ -33,3 +33,4 @@ from .vwma import vwma
 from .wcp import wcp
 from .wma import wma
 from .zlma import zlma
+from .pivot import pivots
