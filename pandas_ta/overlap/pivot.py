@@ -1,11 +1,14 @@
 from numpy import NaN, select
-from pandas import DataFrame, to_datetime, infer_freq
+from pandas import DataFrame, to_datetime, infer_freq,Series
 from pandas_ta.utils import v_datetime_ordered, v_series
 import pandas as pd
+from pandas_ta._typing import DictLike, Int, IntFloat
 
 
-def pivots(_open, high, low, close, anchor=None, method=None):
-    _open = v_series(_open)
+
+def pivots(open_, high, low, close, anchor=None, method=None,**kwargs: DictLike
+) -> Series:
+    open_ = v_series(open_)
     high = v_series(high)
     low = v_series(low)
     close = v_series(close)
@@ -36,7 +39,7 @@ def pivots(_open, high, low, close, anchor=None, method=None):
     df = DataFrame(
         index=date,
         data={
-            "open": _open.values,
+            "open": open_.values,
             "high": high.values,
             "low": low.values,
             "close": close.values,
