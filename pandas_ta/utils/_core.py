@@ -2,8 +2,8 @@
 import re as re_
 from pathlib import Path
 from sys import float_info as sflt
-
-from numpy import argmax, argmin
+from numba import njit
+from numpy import argmax, argmin, finfo, float64
 from pandas import DataFrame, Series
 from pandas.api.types import is_datetime64_any_dtype
 from pandas_ta import Imports
@@ -65,6 +65,14 @@ def recent_maximum_index(x):
 
 def recent_minimum_index(x):
     return int(argmin(x[::-1]))
+
+
+@njit(cache=True)
+def nb_non_zero_range(x, y):
+    diff = x - y
+    if diff.any() == 0:
+        diff += finfo(float64).eps
+    return diff
 
 
 def signed_series(series: Series, initial: int = None) -> Series:
