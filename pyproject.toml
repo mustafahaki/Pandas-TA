@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pandas_ta"
+version = "2.0.0"
+description = "An easy to use Python 3 Pandas Extension with 130+ Technical Analysis Indicators. Can be called from a Pandas DataFrame or standalone like TA-Lib. Correlation tested with TA-Lib."
+authors = ["Kevin Johnson <appliedmathkj@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "2.2.3"
+numpy = "1.26.4"  # https://stackoverflow.com/questions/78650222/valueerror-numpy-dtype-size-changed-may-indicate-binary-incompatibility-expec
+python-dateutil = "^2.9.0"
+pytz = "^2024.2"
+six = "^1.16.0"
+TA-Lib = { version="0.4.32", optional=true }
+
+[tool.poetry.extras]
+talib = ["TA-Lib"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
