@@ -985,6 +985,14 @@ class AnalysisIndicators(BasePandasObject):
         result = fisher(high=high, low=low, length=length, signal=signal, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
+    def imi(self, length = None, offset=None, **kwargs):
+        open_ = self._get_column(kwargs.pop("open", "open"))
+        close = self._get_column(kwargs.pop("close", "close"))
+        result = imi(open_=open_, close=close, length=length, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+        
+    
+    
     def inertia(self, length=None, rvi_length=None, scalar=None, refined=None, thirds=None, mamode=None, drift=None, offset=None, **kwargs):
         close = self._get_column(kwargs.pop("close", "close"))
         if refined is not None or thirds is not None:
