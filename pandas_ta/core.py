@@ -1566,25 +1566,25 @@ class AnalysisIndicators(BasePandasObject):
         result = between(series_a=a, series_b=b, series_c=c, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
     
-    def diff(self, asint=True, offset=None, **kwargs):
+    def diff(self, asint=False, offset=None, **kwargs):
         a = self._get_column(kwargs.pop("a", "a"))
         b = self._get_column(kwargs.pop("b", "b"))
         result = diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
     
-    def price_deviation(self, asint=True, length=3, offset=None, **kwargs):
+    def price_deviation(self, asint=False, length=3, offset=None, **kwargs):
         a = self._get_column(kwargs.pop("a", "a"))
         b = self._get_column(kwargs.pop("b", "b"))
         result = price_deviation(series_a=a, series_b=b, asint=asint, length=length, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
         
-    def absolute_diff(self, asint=True, offset=None, **kwargs):
+    def absolute_diff(self, asint=False, offset=None, **kwargs):
         a = self._get_column(kwargs.pop("a", "a"))
         b = self._get_column(kwargs.pop("b", "b"))
         result = absolute_diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
     
-    def sum(self, asint=True, offset=None, **kwargs):
+    def sum(self, asint=False, offset=None, **kwargs):
         a = self._get_column(kwargs.pop("a", "a"))
         b = self._get_column(kwargs.pop("b", "b"))
         result = sum(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
