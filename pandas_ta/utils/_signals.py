@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, concat
 
 from ._core import get_offset, verify_series
 from ._math import zero
@@ -59,7 +59,8 @@ def below_value(series_a: Series, value: float, asint: bool = True, offset: int 
     return _above_below(series_a, series_b, above=False, asint=asint, offset=offset, **kwargs)
 
 def between(series_a: Series, series_b: Series, series_c: Series, asint: bool = True, offset: int = None, **kwargs):
-    """Indicator: Between, checks if series_a is between series_b (up limit) and series_c (down limit).
+    """Indicator: Between, checks if series_a is between series_b  and series_c.
+        dynamically handling cases where series_b < series_c.
     """
     
     series_a = verify_series(series_a)
@@ -71,8 +72,13 @@ def between(series_a: Series, series_b: Series, series_c: Series, asint: bool = 
     series_b.apply(zero)
     series_c.apply(zero)
 
-    # Calculate Result
-    current = (series_a >= series_c) & (series_a <= series_b)
+    # Dynamically compute the lower and upper bounds
+    lower_bound = concat([series_b, series_c], axis=1).min(axis=1)
+    upper_bound = concat([series_b, series_c], axis=1).max(axis=1)
+
+    # Check if series_a is within bounds
+    current = (series_a >= lower_bound) & (series_a <= upper_bound)
+
 
     if asint:
         current = current.astype(int)
