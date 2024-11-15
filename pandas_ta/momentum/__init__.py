@@ -14,6 +14,7 @@ from .dm import dm
 from .er import er
 from .eri import eri
 from .fisher import fisher
+from .imi import imi
 from .inertia import inertia
 from .kdj import kdj
 from .kst import kst

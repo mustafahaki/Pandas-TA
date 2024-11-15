@@ -985,6 +985,14 @@ class AnalysisIndicators(BasePandasObject):
         result = fisher(high=high, low=low, length=length, signal=signal, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
+    def imi(self, length = None, offset=None, **kwargs):
+        open_ = self._get_column(kwargs.pop("open", "open"))
+        close = self._get_column(kwargs.pop("close", "close"))
+        result = imi(open_=open_, close=close, length=length, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+        
+    
+    
     def inertia(self, length=None, rvi_length=None, scalar=None, refined=None, thirds=None, mamode=None, drift=None, offset=None, **kwargs):
         close = self._get_column(kwargs.pop("close", "close"))
         if refined is not None or thirds is not None:
@@ -1382,6 +1390,11 @@ class AnalysisIndicators(BasePandasObject):
         close = self._get_column(kwargs.pop("close", "close"))
         result = stdev(close=close, length=length, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
+    
+    def shifted_stdev(self, length=None, new_mean=None, **kwargs):
+        close = self._get_column(kwargs.pop("close", "close"))
+        result = shifted_stdev(close=close, length=length, new_mean=new_mean, **kwargs)
+        return self._post_process(result, **kwargs)
 
     def tos_stdevall(self, length=None, stds=None, offset=None, **kwargs):
         close = self._get_column(kwargs.pop("close", "close"))
@@ -1392,7 +1405,12 @@ class AnalysisIndicators(BasePandasObject):
         close = self._get_column(kwargs.pop("close", "close"))
         result = variance(close=close, length=length, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
-
+    
+    def shifted_variance(self, length= None, new_mean= None, **kwargs):
+        close = self._get_column(kwargs.pop("close", "close"))
+        result = shifted_variance(close=close, length=length, new_mean=new_mean, **kwargs)
+        return self._post_process(result, **kwargs)
+    
     def zscore(self, length=None, std=None, offset=None, **kwargs):
         close = self._get_column(kwargs.pop("close", "close"))
         result = zscore(close=close, length=length, std=std, offset=offset, **kwargs)
@@ -1520,35 +1538,67 @@ class AnalysisIndicators(BasePandasObject):
 
     # Utility
     def above(self, asint=True, offset=None, **kwargs):
-        a = self._get_column(kwargs.pop("close", "a"))
-        b = self._get_column(kwargs.pop("close", "b"))
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
         result = above(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
     def above_value(self, value=None, asint=True, offset=None, **kwargs):
-        a = self._get_column(kwargs.pop("close", "a"))
+        a = self._get_column(kwargs.pop("a", "a"))
         result = above_value(series_a=a, value=value, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
     def below(self, asint=True, offset=None, **kwargs):
-        a = self._get_column(kwargs.pop("close", "a"))
-        b = self._get_column(kwargs.pop("close", "b"))
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
         result = below(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
     def below_value(self, value=None, asint=True, offset=None, **kwargs):
-        a = self._get_column(kwargs.pop("close", "a"))
+        a = self._get_column(kwargs.pop("a", "a"))
         result = below_value(series_a=a, value=value, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
+    def between(self, asint=True, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        c = self._get_column(kwargs.pop("c", "c"))
+        result = between(series_a=a, series_b=b, series_c=c, asint=asint, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+    
+    def diff(self, asint=False, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        result = diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+    
+    def price_deviation(self, asint=False, length=3, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        result = price_deviation(series_a=a, series_b=b, asint=asint, length=length, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+        
+    def absolute_diff(self, asint=False, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        result = absolute_diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+    
+    def sum(self, asint=False, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        result = sum(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+    
+    
     def cross(self, above=True, asint=True, offset=None, **kwargs):
-        a = self._get_column(kwargs.pop("close", "a"))
-        b = self._get_column(kwargs.pop("close", "b"))
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
         result = cross(series_a=a, series_b=b, above=above, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
     def cross_value(self, value=None, above=True, asint=True, offset=None, **kwargs):
-        a = self._get_column(kwargs.pop("close", "a"))
+        a = self._get_column(kwargs.pop("a", "a"))
         # a = self._get_column(a, f"{a}")
         result = cross_value(series_a=a, value=value, above=above, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)

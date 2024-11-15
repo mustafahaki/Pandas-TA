@@ -47,7 +47,7 @@ Category = {
     # Momentum
     "momentum": [
         "ao", "apo", "bias", "bop", "brar", "cci", "cfo", "cg", "cmo",
-        "coppock", "cti", "er", "eri", "fisher", "inertia", "kdj", "kst", "macd",
+        "coppock", "cti", "er", "eri", "fisher", "imi", "inertia", "kdj", "kst", "macd",
         "mom", "pgo", "ppo", "psl", "pvo", "qqe", "roc", "rsi", "rsx", "rvgi",
         "slope", "smi", "squeeze", "squeeze_pro", "stc", "stoch", "stochrsi", "td_seq", "trix",
         "tsi", "uo", "willr"
@@ -63,8 +63,8 @@ Category = {
     "performance": ["log_return", "percent_return"],
     # Statistics
     "statistics": [
-        "entropy", "kurtosis", "mad", "median", "quantile", "skew", "stdev",
-        "tos_stdevall", "variance", "zscore"
+        "entropy", "kurtosis", "mad", "median", "quantile", "skew", "stdev", "shifted_stdev",
+        "tos_stdevall", "variance", "shifted_variance", "zscore"
     ],
     # Trend
     "trend": [
