@@ -1572,6 +1572,12 @@ class AnalysisIndicators(BasePandasObject):
         result = diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
     
+    def price_deviation(self, asint=True, length=3, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        result = price_deviation(series_a=a, series_b=b, asint=asint, length=length, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+        
     def absolute_diff(self, asint=True, offset=None, **kwargs):
         a = self._get_column(kwargs.pop("a", "a"))
         b = self._get_column(kwargs.pop("b", "b"))

@@ -119,6 +119,56 @@ def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = N
 
     return current
 
+import pandas as pd
+from pandas import Series, concat
+
+def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: bool = True, offset: int = None, **kwargs):
+    """
+    Indicator: price_deviation, calculates the absolute deviation between the price and the moving average (MA)
+    over the past 'n' periods.
+    
+    Parameters:
+    - series_a (Series): The series containing price data (e.g., 'close').
+    - series_b (Series): The series containing moving average data (e.g., 'MA20').
+    - periods (int): The number of periods over which to calculate the absolute deviation. Default is 3.
+    - asint (bool): Whether to convert the result to integer type. Default is True.
+    - offset (int): The number of periods to shift the result. Default is None.
+    
+    Returns:
+    - Series: A Series containing the absolute deviations over the past 'n' periods.
+    """
+    # Ensure the series are valid
+    series_a = verify_series(series_a)
+    series_b = verify_series(series_b)
+    offset = get_offset(offset)
+
+    series_a.apply(zero)
+    series_b.apply(zero)
+    
+    # Apply rolling window to compute absolute difference from MA for 'n' periods
+    lower_bound = concat([series_a, series_b], axis=1).min(axis=1)
+    upper_bound = concat([series_a, series_b], axis=1).max(axis=1)
+    
+    # Calculate the absolute deviation (difference between max and min in the rolling window)
+    current = upper_bound - lower_bound
+    current = current.rolling(window=length).apply(lambda x: abs(x[-1] - x[0]), raw=False)
+    
+    # Convert to integer if required
+    if asint:
+        current = current.astype(int)
+    
+    # Offset (shift) the result if specified
+    if offset != 0:
+        current = current.shift(offset)
+    
+    # Naming the output with the original series names
+    current.name = f"PRICEDEVIATION_{series_a.name}_{series_b.name}"
+    current.category = "utility"
+    
+    return current
+
+
+
 def absolute_diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
     """Indicator: absolute_diff, calculates the absolute difference between two series."""
 
