@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from numpy import sqrt as npsqrt
 from .variance import variance
+from .stdev import stdev
 from .shifted_variance import shifted_variance
 from pandas_ta import Imports
 from pandas_ta.utils import get_offset, verify_series

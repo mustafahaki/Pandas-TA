@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pandas_ta import Imports
 from pandas_ta.utils import get_offset, verify_series
-
+from .variance import variance as VAR
 
 def shifted_variance(close, length=None, new_mean= None, ddof=None, talib=None, offset=None, **kwargs):
     """Indicator: Variance"""
@@ -15,7 +15,7 @@ def shifted_variance(close, length=None, new_mean= None, ddof=None, talib=None, 
 
     if close is None: return
     
-    if new_mean is None: return variance(close=close, length=length, ddof=ddof, talib=talib, offset=offset, **kwargs)
+    if new_mean is None: return VAR(close=close, length=length, ddof=ddof, talib=talib, offset=offset, **kwargs)
     
     
     # Calculate Result
