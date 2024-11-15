@@ -151,7 +151,7 @@ def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: 
     
     # Calculate the absolute deviation (difference between max and min in the rolling window)
     current = upper_bound - lower_bound
-    current = current.rolling(window=length).apply(lambda x: abs(x[-1] - x[0]), raw=False)
+    current = current.rolling(window=length,min_periods=1).apply(lambda x: abs(x[-1] - x[0]), raw=False)
     
     # Convert to integer if required
     if asint:
