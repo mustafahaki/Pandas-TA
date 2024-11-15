@@ -1572,6 +1572,12 @@ class AnalysisIndicators(BasePandasObject):
         result = diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
     
+    def absolute_diff(self, asint=True, offset=None, **kwargs):
+        a = self._get_column(kwargs.pop("a", "a"))
+        b = self._get_column(kwargs.pop("b", "b"))
+        result = absolute_diff(series_a=a, series_b=b, asint=asint, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+    
     def sum(self, asint=True, offset=None, **kwargs):
         a = self._get_column(kwargs.pop("a", "a"))
         b = self._get_column(kwargs.pop("b", "b"))

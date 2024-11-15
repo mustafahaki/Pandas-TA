@@ -102,7 +102,7 @@ def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = N
 
     series_a.apply(zero)
     series_b.apply(zero)
-
+   
     # Calculate Result
     current = series_a - series_b
 
@@ -118,7 +118,37 @@ def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = N
     current.category = "utility"
 
     return current
+
+def absolute_diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
+    """Indicator: absolute_diff, calculates the absolute difference between two series."""
+
+    series_a = verify_series(series_a)
+    series_b = verify_series(series_b)
+    offset = get_offset(offset)
+
+    series_a.apply(zero)
+    series_b.apply(zero)
     
+     # Dynamically compute the lower and upper bounds
+    lower_bound = concat([series_a, series_b], axis=1).min(axis=1)
+    upper_bound = concat([series_a, series_b], axis=1).max(axis=1)
+    
+    # Calculate Result
+    current = upper_bound - lower_bound
+
+    if asint:
+        current = current.astype(int)
+
+    # Offset
+    if offset != 0:
+        current = current.shift(offset)
+
+    # Name & Category
+    current.name = f"ABS_{series_a.name}_-_{series_b.name}"
+    current.category = "utility"
+
+    return current
+
 def sum(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
     """Indicator: sum, calculates the sum of two series."""
 
