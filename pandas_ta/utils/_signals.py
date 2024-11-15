@@ -96,8 +96,8 @@ def between(series_a: Series, series_b: Series, series_c: Series, asint: bool = 
 def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
     """Indicator: diff, calculates the difference between two series."""
 
-    series_a = verify_series(series_a)
-    series_b = verify_series(series_b)
+    series_a = verify_series(series_a,0)
+    series_b = verify_series(series_b,0)
     offset = get_offset(offset)
 
     series_a.apply(zero)
