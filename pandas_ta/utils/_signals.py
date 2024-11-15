@@ -162,7 +162,7 @@ def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: 
         current = current.shift(offset)
     
     # Naming the output with the original series names
-    current.name = f"PRICEDEVIATION_{series_a.name}_{series_b.name}"
+    current.name = f"PRICEDEVIATION_{series_a.name}_{series_b.name}_{length}"
     current.category = "utility"
     
     return current
