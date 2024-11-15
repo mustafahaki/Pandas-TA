@@ -93,7 +93,7 @@ def between(series_a: Series, series_b: Series, series_c: Series, asint: bool = 
 
     return current
 
-def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
+def diff(series_a: Series, series_b: Series, asint: bool = False, offset: int = None, **kwargs):
     """Indicator: diff, calculates the difference between two series."""
 
     series_a = verify_series(series_a,0)
@@ -122,7 +122,7 @@ def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = N
 import pandas as pd
 from pandas import Series, concat
 
-def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: bool = True, offset: int = None, **kwargs):
+def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: bool = False, offset: int = None, **kwargs):
     """
     Indicator: price_deviation, calculates the absolute deviation between the price and the moving average (MA)
     over the past 'n' periods.
@@ -176,7 +176,7 @@ def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: 
 
 
 
-def absolute_diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
+def absolute_diff(series_a: Series, series_b: Series, asint: bool = False, offset: int = None, **kwargs):
     """Indicator: absolute_diff, calculates the absolute difference between two series."""
 
     series_a = verify_series(series_a)
@@ -206,7 +206,7 @@ def absolute_diff(series_a: Series, series_b: Series, asint: bool = True, offset
 
     return current
 
-def sum(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
+def sum(series_a: Series, series_b: Series, asint: bool = False, offset: int = None, **kwargs):
     """Indicator: sum, calculates the sum of two series."""
 
     series_a = verify_series(series_a)
