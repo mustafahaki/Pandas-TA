@@ -161,6 +161,13 @@ def price_deviation(series_a: Series, series_b: Series, length: int = 3, asint: 
     if offset != 0:
         current = current.shift(offset)
     
+    
+    # Handle fills
+    if "fillna" in kwargs:
+        current.fillna(kwargs["fillna"], inplace=True)
+    if "fill_method" in kwargs:
+        current.fillna(method=kwargs["fill_method"], inplace=True)
+    
     # Naming the output with the original series names
     current.name = f"PRICEDEVIATION_{series_a.name}_{series_b.name}_{length}"
     current.category = "utility"
