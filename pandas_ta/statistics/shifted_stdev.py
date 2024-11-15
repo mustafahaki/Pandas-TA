@@ -34,7 +34,7 @@ def shifted_stdev(close, length=None, new_mean=None, ddof=None, talib=None, offs
         shifted_stdev.fillna(method=kwargs["fill_method"], inplace=True)
 
     # Name & Category
-    shifted_stdev.name = f"SHIFTEDSTDEV_{length}_"
+    shifted_stdev.name = f"SHIFTEDSTDEV_{length}_{new_mean}"
     shifted_stdev.category = "statistics"
 
     return shifted_stdev
