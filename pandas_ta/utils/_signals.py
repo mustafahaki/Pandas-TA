@@ -6,6 +6,7 @@ from ._math import zero
 
 
 def _above_below(series_a: Series, series_b: Series, above: bool = True, asint: bool = True, offset: int = None, **kwargs):
+    
     series_a = verify_series(series_a)
     series_b = verify_series(series_b)
     offset = get_offset(offset)
@@ -57,6 +58,86 @@ def below_value(series_a: Series, value: float, asint: bool = True, offset: int 
     series_b = Series(value, index=series_a.index, name=f"{value}".replace(".", "_"))
     return _above_below(series_a, series_b, above=False, asint=asint, offset=offset, **kwargs)
 
+def between(series_a: Series, series_b: Series, series_c: Series, asint: bool = True, offset: int = None, **kwargs):
+    """Indicator: Between, checks if series_a is between series_b (up limit) and series_c (down limit).
+    """
+    
+    series_a = verify_series(series_a)
+    series_b = verify_series(series_b)
+    series_c = verify_series(series_c)
+    offset = get_offset(offset)
+
+    series_a.apply(zero)
+    series_b.apply(zero)
+    series_c.apply(zero)
+
+    # Calculate Result
+    current = (series_a >= series_c) & (series_a <= series_b)
+
+    if asint:
+        current = current.astype(int)
+
+    # Offset
+    if offset != 0:
+        current = current.shift(offset)
+
+    # Name & Category
+    current.name = f"{series_c.name}_<=_{series_a.name}_<=_{series_b.name}"
+    current.category = "utility"
+
+    return current
+
+def diff(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
+    """Indicator: diff, calculates the difference between two series."""
+
+    series_a = verify_series(series_a)
+    series_b = verify_series(series_b)
+    offset = get_offset(offset)
+
+    series_a.apply(zero)
+    series_b.apply(zero)
+
+    # Calculate Result
+    current = series_a - series_b
+
+    if asint:
+        current = current.astype(int)
+
+    # Offset
+    if offset != 0:
+        current = current.shift(offset)
+
+    # Name & Category
+    current.name = f"{series_a.name}_-_{series_b.name}"
+    current.category = "utility"
+
+    return current
+    
+def sum(series_a: Series, series_b: Series, asint: bool = True, offset: int = None, **kwargs):
+    """Indicator: sum, calculates the sum of two series."""
+
+    series_a = verify_series(series_a)
+    series_b = verify_series(series_b)
+    offset = get_offset(offset)
+
+    series_a.apply(zero)
+    series_b.apply(zero)
+
+    # Calculate Result
+    current = series_a + series_b
+
+    if asint:
+        current = current.astype(int)
+
+    # Offset
+    if offset != 0:
+        current = current.shift(offset)
+
+    # Name & Category
+    current.name = f"{series_a.name}_+_{series_b.name}"
+    current.category = "utility"
+
+    return current
 
 def cross_value(series_a: Series, value: float, above: bool = True, asint: bool = True, offset: int = None, **kwargs):
     series_b = Series(value, index=series_a.index, name=f"{value}".replace(".", "_"))
