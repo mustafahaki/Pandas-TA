@@ -37,6 +37,8 @@ def halftrend(
         amplitude (int): Amplitude. Default is 2.
         channel_deviation (int): Channel deviation. Default is 2.
 
+    Kwargs:
+        fillna (value, optional): pd.DataFrame.fillna(value)
     Returns:
         pd.DataFrame: DataFrame containing HalfTrend values.
     """
@@ -116,6 +118,15 @@ def halftrend(
         atrLowSeries.iat[i] = atrLow
         atrCloseSeries.iat[i] = up if trend == 0 else down
         atrDirectionSeries.iat[i] = direction
+
+    # Fill
+    if "fillna" in kwargs:
+        atrHighSeries.fillna(kwargs["fillna"], inplace=True)
+        atrLowSeries.fillna(kwargs["fillna"], inplace=True)
+        atrCloseSeries.fillna(kwargs["fillna"], inplace=True)
+        atrDirectionSeries.fillna(kwargs["fillna"], inplace=True)
+        arrUp.fillna(kwargs["fillna"], inplace=True)
+        arrDown.fillna(kwargs["fillna"], inplace=True)
 
     # Output DataFrame
     _props = f"_{atr_length}_{amplitude}_{channel_deviation}"
