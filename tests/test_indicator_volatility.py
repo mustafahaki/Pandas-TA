@@ -97,6 +97,10 @@ def test_chandelier_exit(df):
     assert isinstance(result, DataFrame)
     assert result.name == "CHDLREXT_22_22_14_2.0"
 
+def test_halftrend(df):
+    result = ta.halftrend(df.high, df.low, df.close)
+    assert isinstance(result, DataFrame)
+    assert result.name == "HALFTREND_14_2_2"
 
 def test_donchian(df):
     result = ta.donchian(df.high, df.low)
