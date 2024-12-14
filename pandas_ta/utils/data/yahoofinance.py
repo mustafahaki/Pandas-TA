@@ -83,7 +83,10 @@ def yf(ticker: str, **kwargs):
         return
     if Imports["yfinance"] and ticker is not None:
         import yfinance as yfra
-        yfra.pdr_override()
+        try:
+            yfra.pdr_override()
+        except AttributeError as e:
+            print(f"Warning: {e}")
 
         # Ticker Info & Chart History
         yfd = yfra.Ticker(ticker)
