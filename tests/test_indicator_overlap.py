@@ -122,6 +122,12 @@ def test_hma(df):
     assert result.name == "HMA_10"
 
 
+def test_ehma(df):
+    result = ta.ehma(df.close)
+    assert isinstance(result, Series)
+    assert result.name == "EHMA_10"
+
+
 def test_hwma(df):
     result = ta.hwma(df.close)
     assert isinstance(result, Series)

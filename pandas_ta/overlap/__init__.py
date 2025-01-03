@@ -8,6 +8,7 @@ from .hilo import hilo
 from .hl2 import hl2
 from .hlc3 import hlc3
 from .hma import hma
+from .ehma import ehma
 from .hwma import hwma
 from .ichimoku import ichimoku
 from .jma import jma
@@ -47,6 +48,7 @@ __all__ = [
     "hl2",
     "hlc3",
     "hma",
+    "ehma",
     "hwma",
     "ichimoku",
     "jma",
