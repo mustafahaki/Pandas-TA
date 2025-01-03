@@ -1207,6 +1207,11 @@ class AnalysisIndicators(object):
         result = hma(close=close, length=length, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
+    def ehma(self, length=None, offset=None, **kwargs: DictLike):
+        close = self._get_column(kwargs.pop("close", "close"))
+        result = ehma(close=close, length=length, offset=offset, **kwargs)
+        return self._post_process(result, **kwargs)
+
     def hwma(self, na=None, nb=None, nc=None, offset=None, **kwargs: DictLike):
         close = self._get_column(kwargs.pop("close", "close"))
         result = hwma(close=close, na=na, nb=nb, nc=nc, offset=offset, **kwargs)
