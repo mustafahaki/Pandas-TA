@@ -10,6 +10,7 @@ from .dema import dema
 from .ema import ema
 from .fwma import fwma
 from .hma import hma
+from .ehma import ehma
 from .linreg import linreg
 from .midpoint import midpoint
 from .pwma import pwma
@@ -60,7 +61,7 @@ def zlma(
 
     mamode = v_mamode(mamode, "ema")
     supported_mas = [
-        "dema", "ema", "fwma", "hma", "linreg", "midpoint", "pwma", "rma",
+        "dema", "ema", "fwma", "hma", "ehma", "linreg", "midpoint", "pwma", "rma",
         "sinwma", "sma", "ssf", "swma", "t3", "tema", "trima", "vidya", "wma"
     ]
 
