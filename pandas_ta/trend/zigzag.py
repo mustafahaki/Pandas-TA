@@ -344,6 +344,10 @@ def zigzag(
     offset = v_offset(offset)
     backtest_mode = v_bool(backtest_mode, False)
 
+    if backtest_mode:
+        # Ensure signals are offset to their confirmation bar
+        offset+=int(floor(legs/2))
+
     # Calculation
     np_high, np_low = high.to_numpy(), low.to_numpy()
     hli, hls, hlv = nb_rolling_hl(np_high, np_low, legs)
