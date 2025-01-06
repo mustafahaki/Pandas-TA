@@ -58,7 +58,7 @@ def nb_rolling_hl(np_high, np_low, window_size):
 
     return idx[:extremes], swing[:extremes], value[:extremes]
 
-@njit(cache=True)
+# @njit(cache=True)
 def nb_find_zigzags_backtest(idx, swing, value, deviation):
     """
     Calculate zigzag points using pre-calculated unfiltered pivots.
@@ -90,7 +90,7 @@ def nb_find_zigzags_backtest(idx, swing, value, deviation):
     zz_dev[zigzags] = 0
 
     m = idx.size
-    for i in range(m+1):
+    for i in range(1, m):
         last_zz_value = zz_value[zigzags - changes]
         current_dev = (value[i] - last_zz_value) / last_zz_value
         # Last point in zigzag is bottom
