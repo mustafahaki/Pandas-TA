@@ -231,6 +231,7 @@ def nb_find_zigzags(idx, swing, value, deviation):
     return zz_idx[:_n], zz_swing[:_n], zz_value[:_n], zz_dev[:_n]
 
 
+
 @njit(cache=True)
 def nb_map_zigzag(idx, swing, value, deviation, n):
     """
