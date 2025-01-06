@@ -219,7 +219,7 @@ def zigzag(
         pd.DataFrame with columns:
             ZIGZAGs : Swing type (bottom: -1, top: 1)
             ZIGZAGv : Price levels of the swing points
-            ZIGZAGd : Deviation from the last confirmed swing point
+            ZIGZAGd : Deviation of each confirmed swing point to their next confirmed swing point. Will be 0 at the last point
     """
     # Validate
     legs = v_pos_default(legs, 10)
