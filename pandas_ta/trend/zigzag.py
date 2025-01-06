@@ -321,8 +321,6 @@ def zigzag(
             ZIGZAGs : Swing type (bottom: -1, top: 1)
             ZIGZAGv : Price levels of the swing points
             ZIGZAGd : Deviation from the last confirmed swing point
-        If backtest_mode is enabled an additional column is included:
-            ZIGZAGi : The indices of each swing point.
     """
     # Validate
     legs = v_pos_default(legs, 10)
