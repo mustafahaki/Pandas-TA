@@ -68,7 +68,7 @@ def nb_find_zigzags(idx, swing, value, deviation):
         idx (1d np array) : Pivot indices
         swing (1d np array) : Pivot swing direction -1 or 1
         value (1d np array) : Pivot values
-        deviation (float) : Deviation percentage for reversal detection.
+        deviation (float) : Deviation percentage for reversal detection
 
     Returns:
         1d np array : Zigzag point indices on original data
@@ -86,14 +86,15 @@ def nb_find_zigzags(idx, swing, value, deviation):
     zz_idx[zigzags] = idx[-1]
     zz_swing[zigzags] = swing[-1]
     zz_value[zigzags] = value[-1]
-    zz_dev[zigzags] = 0
+    zz_dev[zigzags] = 0 
 
     m = idx.size
     for i in range(m - 2, -1, -1):
-        # last point in zigzag is bottom
+        # Next point in zigzag is bottom
         if zz_swing[zigzags] == -1:
             if swing[i] == -1:
-                # If the pivot is lower than the last ZZ bottom, move it to the pivot
+                # If the current pivot is lower than the next ZZ bottom in time, move it to the pivot.
+                # As this lower value invalidates the other one
                 if value[i] < zz_value[zigzags] and zigzags > 1:
                     current_dev = (zz_value[zigzags - 1] - value[i]) / value[i]
                     zz_idx[zigzags] = idx[i]
@@ -101,7 +102,7 @@ def nb_find_zigzags(idx, swing, value, deviation):
                     zz_value[zigzags] = value[i]
                     zz_dev[zigzags - 1] = 100 * current_dev
             else:
-                # If the deviation between pivot and the last ZZ bottom is great enough create new ZZ point.
+                # If the deviation between pivot and the next ZZ bottom is great enough create new ZZ point.
                 current_dev = (value[i] - zz_value[zigzags]) / value[i]
                 if current_dev > 0.01 * deviation:
                     if zz_idx[zigzags] == idx[i]:
@@ -112,10 +113,11 @@ def nb_find_zigzags(idx, swing, value, deviation):
                     zz_value[zigzags] = value[i]
                     zz_dev[zigzags - 1] = 100 * current_dev
 
-        # last point in zigzag is peak
+        # Next point in zigzag is top
         else:
             if swing[i] == 1:
-                # If the pivot is higher than the last ZZ top, move it to the pivot
+                # If the current pivot is greater than the next ZZ top in time, move it to the pivot.
+                # As this higher value invalidates the other one
                 if value[i] > zz_value[zigzags] and zigzags > 1:
                     current_dev = (value[i] - zz_value[zigzags - 1]) / value[i]
                     zz_idx[zigzags] = idx[i]
@@ -123,7 +125,7 @@ def nb_find_zigzags(idx, swing, value, deviation):
                     zz_value[zigzags] = value[i]
                     zz_dev[zigzags - 1] = 100 * current_dev
             else:
-                # If the deviation between pivot and the last ZZ top is great enough create new ZZ point.
+                # If the deviation between pivot and the next ZZ top is great enough create new ZZ point.
                 current_dev = (zz_value[zigzags] - value[i]) / value[i]
                 if current_dev > 0.01 * deviation:
                     if zz_idx[zigzags] == idx[i]:
@@ -136,6 +138,7 @@ def nb_find_zigzags(idx, swing, value, deviation):
 
     _n = zigzags + 1
     return zz_idx[:_n], zz_swing[:_n], zz_value[:_n], zz_dev[:_n]
+
 
 
 @njit(cache=True)
@@ -219,7 +222,7 @@ def zigzag(
         pd.DataFrame with columns:
             ZIGZAGs : Swing type (bottom: -1, top: 1)
             ZIGZAGv : Price levels of the swing points
-            ZIGZAGd : Deviation of each confirmed swing point to their next confirmed swing point. Will be 0 at the last point
+            ZIGZAGd : Deviation from the last confirmed swing point.
     """
     # Validate
     legs = v_pos_default(legs, 10)
