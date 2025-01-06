@@ -91,7 +91,7 @@ def nb_find_zigzags_backtest(idx, swing, value, deviation):
 
     m = idx.size
     for i in range(m+1):
-        last_zz_value = zz_value[zigzags - (1+changes)]
+        last_zz_value = zz_value[zigzags - changes]
         current_dev = (value[i] - last_zz_value) / last_zz_value
         # Last point in zigzag is bottom
         if zz_swing[zigzags] == -1:
