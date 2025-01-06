@@ -216,7 +216,10 @@ def zigzag(
         fill_method (value, optional): Type of fill method
 
     Returns:
-        pd.DataFrame: swing, and swing_type (high or low).
+        pd.DataFrame with columns:
+            ZIGZAGs : Swing type (bottom: -1, top: 1)
+            ZIGZAGv : Price levels of the swing points
+            ZIGZAGd : Deviation from the last confirmed swing point
     """
     # Validate
     legs = v_pos_default(legs, 10)
