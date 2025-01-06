@@ -14,12 +14,27 @@ from pandas_ta.utils import (
 
 @njit(cache=True)
 def nb_rolling_hl(np_high, np_low, window_size):
+    """
+    Find high and low pivots.
+    Using a centered rolling window.
+    
+    Args:
+        np_high (1d np array) : High values
+        np_low (1d np array) : Low values
+        window_size (int) : Window size (will be made uneven to have equal size sides)
+
+    Returns:
+        1d np array : Detected pivot indices
+        1d np array : Detected pivot directions
+        1d np array : Detected pivot values
+    """
+
     m = np_high.size
     idx = zeros(m)
     swing = zeros(m)  # where a high = 1 and low = -1
     value = zeros(m)
 
-    extremums = 0
+    extremes = 0
     left = int(floor(window_size / 2))
     right = left + 1
     # sample_array = [*[left-window], *[center], *[right-window]]
@@ -30,22 +45,38 @@ def nb_rolling_hl(np_high, np_low, window_size):
         high_window = np_high[i - left: i + right]
 
         if (low_center <= low_window).all():
-            idx[extremums] = i
-            swing[extremums] = -1
-            value[extremums] = low_center
-            extremums += 1
+            idx[extremes] = i
+            swing[extremes] = -1
+            value[extremes] = low_center
+            extremes += 1
 
         if (high_center >= high_window).all():
-            idx[extremums] = i
-            swing[extremums] = 1
-            value[extremums] = high_center
-            extremums += 1
+            idx[extremes] = i
+            swing[extremes] = 1
+            value[extremes] = high_center
+            extremes += 1
 
-    return idx[:extremums], swing[:extremums], value[:extremums]
+    return idx[:extremes], swing[:extremes], value[:extremes]
 
 
 @njit(cache=True)
 def nb_find_zigzags(idx, swing, value, deviation):
+    """
+    Calculate zigzag points using pre-calculated unfiltered pivots.
+    
+    Args:
+        idx (1d np array) : Pivot indices
+        swing (1d np array) : Pivot swing direction -1 or 1
+        value (1d np array) : Pivot values
+        deviation (float) : Deviation percentage for reversal detection.
+
+    Returns:
+        1d np array : Zigzag point indices on original data
+        1d np array : Zigzag swing directions
+        1d np array : Zigzag point values
+        1d np array : Zigzag point deviation
+    """
+
     zz_idx = zeros_like(idx)
     zz_swing = zeros_like(swing)
     zz_value = zeros_like(value)
@@ -62,13 +93,15 @@ def nb_find_zigzags(idx, swing, value, deviation):
         # last point in zigzag is bottom
         if zz_swing[zigzags] == -1:
             if swing[i] == -1:
-                if zz_value[zigzags] > value[i] and zigzags > 1:
+                # If the pivot is lower than the last ZZ bottom, move it to the pivot
+                if value[i] < zz_value[zigzags] and zigzags > 1:
                     current_dev = (zz_value[zigzags - 1] - value[i]) / value[i]
                     zz_idx[zigzags] = idx[i]
                     zz_swing[zigzags] = swing[i]
                     zz_value[zigzags] = value[i]
                     zz_dev[zigzags - 1] = 100 * current_dev
             else:
+                # If the deviation between pivot and the last ZZ bottom is great enough create new ZZ point.
                 current_dev = (value[i] - zz_value[zigzags]) / value[i]
                 if current_dev > 0.01 * deviation:
                     if zz_idx[zigzags] == idx[i]:
@@ -82,13 +115,15 @@ def nb_find_zigzags(idx, swing, value, deviation):
         # last point in zigzag is peak
         else:
             if swing[i] == 1:
-                if zz_value[zigzags] < value[i] and zigzags > 1:
+                # If the pivot is higher than the last ZZ top, move it to the pivot
+                if value[i] > zz_value[zigzags] and zigzags > 1:
                     current_dev = (value[i] - zz_value[zigzags - 1]) / value[i]
                     zz_idx[zigzags] = idx[i]
                     zz_swing[zigzags] = swing[i]
                     zz_value[zigzags] = value[i]
                     zz_dev[zigzags - 1] = 100 * current_dev
             else:
+                # If the deviation between pivot and the last ZZ top is great enough create new ZZ point.
                 current_dev = (zz_value[zigzags] - value[i]) / value[i]
                 if current_dev > 0.01 * deviation:
                     if zz_idx[zigzags] == idx[i]:
@@ -105,6 +140,22 @@ def nb_find_zigzags(idx, swing, value, deviation):
 
 @njit(cache=True)
 def nb_map_zigzag(idx, swing, value, deviation, n):
+    """
+    Maps nb_find_zigzag results back onto the original data indices.
+
+    Args:
+        idx (1d np array): indices from nb_find_zigzag
+        swing (1d np array): swing directions from nb_find_zigzag
+        value (1d np array): values from nb_find_zigzag
+        deviation (1d np array): deviations from nb_find_zigzag
+        n (int): Length of original high low data
+
+    Returns:
+        1d np array : swing map
+        1d np array : value map
+        1d np array : deviation map
+    """    
+
     swing_map = zeros(n)
     value_map = zeros(n)
     dev_map = zeros(n)
@@ -150,11 +201,14 @@ def zigzag(
         high (pd.Series): Series of 'high's
         low (pd.Series): Series of 'low's
         close (pd.Series): Series of 'close's. Default: None
-        legs (int): Number of legs > 2. Default: 10
-        deviation (float): Price Deviation Percentage for a reversal.
+        legs (int): Pivot detection window size.
+            Pivots will be detected at the peak HL values in this window.
+            These pivots will still be filtered by the deviation criteria.
+            Minimum: 2. Default: 10
+        deviation (float): Price deviation percentage for a reversal.
             Default: 5
-        retrace (bool): Default: False
-        last_extreme (bool): Default: True
+        retrace (bool): Default: False **NOT IMPLEMENTED**
+        last_extreme (bool): Default: True **NOT IMPLEMENTED**
         offset (int): How many periods to offset the result. Default: 0
 
     Kwargs:
