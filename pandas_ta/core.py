@@ -1202,9 +1202,9 @@ class AnalysisIndicators(object):
         result = hlc3(high=high, low=low, close=close, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
-    def hma(self, length=None, offset=None, **kwargs: DictLike):
+    def hma(self, length=None, mamode=None, offset=None, **kwargs: DictLike):
         close = self._get_column(kwargs.pop("close", "close"))
-        result = hma(close=close, length=length, offset=offset, **kwargs)
+        result = hma(close=close, length=length, mamode=mamode,offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
     def hwma(self, na=None, nb=None, nc=None, offset=None, **kwargs: DictLike):
