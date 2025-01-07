@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import floor, isnan, nan, zeros, zeros_like
+from numpy import floor, isnan, nan, zeros, zeros_like, roll
 from numba import njit
 from pandas import Series, DataFrame
 from pandas_ta._typing import DictLike, Int, IntFloat
@@ -58,7 +58,7 @@ def nb_rolling_hl(np_high, np_low, window_size):
 
     return idx[:extremes], swing[:extremes], value[:extremes]
 
-# @njit(cache=True)
+@njit(cache=True)
 def nb_find_zigzags_backtest(idx, swing, value, deviation):
     """
     Calculate zigzag points using pre-calculated unfiltered pivots.
@@ -89,18 +89,25 @@ def nb_find_zigzags_backtest(idx, swing, value, deviation):
     zz_value[zigzags] = value[0]
     zz_dev[zigzags] = 0
 
+    # print(f'Starting S: {zz_swing[0]}')
+
     m = idx.size
     for i in range(1, m):
-        last_zz_value = zz_value[zigzags - changes]
+        last_zz_value = zz_value[zigzags]
         current_dev = (value[i] - last_zz_value) / last_zz_value
+
+        # print(f'{i} | P {swing[i]:.0f} : {idx[i]:.0f} , {value[i]}')
+        # print(f'{len(str(i))*" "} | Last: {zz_swing[zigzags-changes]:.0f} , Dev: %{(current_dev*100):.1f}')
+
         # Last point in zigzag is bottom
-        if zz_swing[zigzags] == -1:
+        if zz_swing[zigzags-changes] == -1:
             if swing[i] == -1:
                 # If the current pivot is lower than the last ZZ bottom:
                 # create a new point and log it as a change
-                if value[i] < zz_value[zigzags] and zigzags > 1:
-                    if zz_idx[zigzags] == idx[i]:
+                if value[i] < zz_value[zigzags]:
+                    if zz_idx[zigzags - changes] == idx[i]:
                         continue
+                    # print(f'{len(str(i))*" "} | Change -1 : {zz_value[zigzags]} to {value[i]}')
                     zigzags += 1
                     changes += 1
                     zz_idx[zigzags] = idx[i]
@@ -110,8 +117,9 @@ def nb_find_zigzags_backtest(idx, swing, value, deviation):
             else:
                 # If the deviation between pivot and the last ZZ bottom is great enough create new ZZ point.
                 if current_dev > 0.01 * deviation:
-                    if zz_idx[zigzags] == idx[i]:
+                    if zz_idx[zigzags - changes] == idx[i]:
                         continue
+                    # print(f'{len(str(i))*" "} | new ZZ 1 {value[i]}')
                     zigzags += 1
                     zz_idx[zigzags] = idx[i]
                     zz_swing[zigzags] = swing[i]
@@ -124,20 +132,22 @@ def nb_find_zigzags_backtest(idx, swing, value, deviation):
             if swing[i] == 1:
                 # If the current pivot is higher than the last ZZ top:
                 # create a new point and log it as a change
-                if value[i] > zz_value[zigzags] and zigzags > 1:
-                    if zz_idx[zigzags] == idx[i]:
+                if value[i] > zz_value[zigzags]:
+                    if zz_idx[zigzags - changes] == idx[i]:
                         continue
+                    # print(f'{len(str(i))*" "} | Change 1 : {zz_value[zigzags]} to {value[i]}')
                     zigzags += 1
                     changes += 1
                     zz_idx[zigzags] = idx[i]
                     zz_swing[zigzags] = swing[i]
                     zz_value[zigzags] = value[i]
-                    zz_dev[zigzags - 1] = 100 * current_dev
+                    zz_dev[zigzags] = 100 * current_dev
             else:
                 # If the deviation between pivot and the last ZZ top is great enough create new ZZ point.
-                if current_dev > 0.01 * deviation:
-                    if zz_idx[zigzags] == idx[i]:
+                if current_dev < -0.01 * deviation:
+                    if zz_idx[zigzags - changes] == idx[i]:
                         continue
+                    # print(f'{len(str(i))*" "} | new ZZ -1 {value[i]}')
                     zigzags += 1
                     zz_idx[zigzags] = idx[i]
                     zz_swing[zigzags] = swing[i]
@@ -209,7 +219,6 @@ def nb_find_zigzags(idx, swing, value, deviation):
                 # If the current pivot is greater than the next ZZ top in time, move it to the pivot.
                 # As this higher value invalidates the other one
                 if value[i] > zz_value[zigzags] and zigzags > 1:
-                    zigzags += 1
                     current_dev = (value[i] - zz_value[zigzags - 1]) / value[i]
                     zz_idx[zigzags] = idx[i]
                     zz_swing[zigzags] = swing[i]
@@ -351,14 +360,22 @@ def zigzag(
     # Calculation
     np_high, np_low = high.to_numpy(), low.to_numpy()
     hli, hls, hlv = nb_rolling_hl(np_high, np_low, legs)
-    zzi, zzs, zzv, zzd = nb_find_zigzags_backtest(hli, hls, hlv, deviation) if backtest_mode else nb_find_zigzags(hli, hls, hlv, deviation)
+    if backtest_mode:
+        zzi, zzs, zzv, zzd = nb_find_zigzags_backtest(hli, hls, hlv, deviation) 
+    else: 
+        zzi, zzs, zzv, zzd = nb_find_zigzags(hli, hls, hlv, deviation) 
+
     zz_swing, zz_value, zz_dev = nb_map_zigzag(zzi, zzs, zzv, zzd, np_high.size)
 
     # Offset
     if offset != 0:
-        zz_swing = zz_swing.shift(offset)
-        zz_value = zz_value.shift(offset)
-        zz_dev = zz_dev.shift(offset)
+        zz_swing = roll(zz_swing, offset)
+        zz_value = roll(zz_value, offset)
+        zz_dev = roll(zz_dev, offset)
+
+        zz_swing[:offset] = nan
+        zz_value[:offset] = nan
+        zz_dev[:offset] = nan
 
     # Fill
     if "fillna" in kwargs:
