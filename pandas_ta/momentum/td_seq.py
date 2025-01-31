@@ -60,11 +60,6 @@ def td_seq(
     if "fillna" in kwargs:
         up_seq.fillna(kwargs["fillna"], inplace=True)
         down_seq.fillna(kwargs["fillna"], inplace=True)
-
-    if "fill_method" in kwargs:
-        up_seq.fillna(method=kwargs["fill_method"], inplace=True)
-        down_seq.fillna(method=kwargs["fill_method"], inplace=True)
-
     # Name and Category
     up_seq.name = "TD_SEQ_UPa" if show_all else "TD_SEQ_UP"
     down_seq.name = "TD_SEQ_DNa" if show_all else "TD_SEQ_DN"
