@@ -61,7 +61,7 @@ setup(
     },
     install_requires=[
         "numba==0.61.0",
-        "numpy==2.1.3",
+        "numpy==2.0.2",
         "pandas==2.2.3",
         "pandas-datareader==0.10.0",
         "scipy==1.15.1"
