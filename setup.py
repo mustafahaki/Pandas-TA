@@ -91,7 +91,7 @@ setup(
             "pandas==2.2.3",
             "pandas-datareader==0.10.0",
             "pytest==7.1.2",
-            "TA-Lib==0.6.4",
+            "TA-Lib==0.6.3",
             "yfinance==0.2.51"
         ],
     },
