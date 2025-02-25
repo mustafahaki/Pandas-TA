@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numba import njit
-from numpy import zeros
+from numpy import full, nan
 from pandas import DataFrame, Series
 
 from pandas_ta._typing import DictLike, Int, IntFloat
@@ -20,13 +20,14 @@ def nb_fvg(
     min_gap: IntFloat,
 ):
     n = np_open.size
-    fvg_high = zeros(n)
-    fvg_low = zeros(n)
-    fvg_type = zeros(n)
+
+    fvg_high = full(n, nan)
+    fvg_low = full(n, nan)
+    fvg_type = full(n, nan)
 
     for i in range(1, n - 1):
         if np_close[i] > np_open[i]:
-            if (np_high[i - 1] - np_low[i + 1]) > min_gap * np_close[i]:
+            if (np_low[i + 1] - np_high[i - 1]) > min_gap * np_close[i]:
                 fvg_low[i] = np_high[i - 1]
                 fvg_high[i] = np_low[i + 1]
                 fvg_type[i] = 1  # bullish
@@ -84,7 +85,8 @@ def fvg(
     if open is None or high is None or low is None or close is None:
         return
 
-    min_gap = v_pos_default(min_gap / 100, 0)
+    min_gap = v_pos_default(min_gap, 0)
+    min_gap = min_gap / 100
     offset = v_offset(offset)
 
     # calculation
