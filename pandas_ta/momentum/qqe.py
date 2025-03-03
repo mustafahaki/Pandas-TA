@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from numpy import maximum as npMaximum
 from numpy import minimum as npMinimum
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from pandas import DataFrame, Series
 
 from .rsi import rsi

@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from pandas_ta import Imports
 from pandas_ta.utils import get_offset, verify_series
 
