@@ -2,7 +2,12 @@
 from typing import Tuple
 
 from numpy import log as npLog
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from numpy import sqrt as npSqrt
 from pandas import Series, Timedelta
 

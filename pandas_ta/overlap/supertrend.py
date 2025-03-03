@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from pandas import DataFrame
 from pandas_ta.overlap import hl2
 from pandas_ta.volatility import atr

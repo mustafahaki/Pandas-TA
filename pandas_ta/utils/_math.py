@@ -14,7 +14,12 @@ from numpy import dot as npDot
 from numpy import fabs as npFabs
 from numpy import exp as npExp
 from numpy import log as npLog
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from numpy import ndarray as npNdArray
 from numpy import seterr
 from numpy import sqrt as npSqrt

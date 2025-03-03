@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from pandas_ta.utils import verify_series
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from pandas import Series
 
 

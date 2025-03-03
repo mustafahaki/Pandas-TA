@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from numpy import array as npArray
 from numpy import arctan as npAtan
-from numpy import nan as npNaN
+import numpy as np
+
+if np.__version__.startswith("2"):
+    from numpy import nan as npNaN
+else:
+    from numpy import NaN as npNaN
 from numpy import pi as npPi
 from numpy.version import version as npVersion
 from pandas import Series
