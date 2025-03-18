@@ -27,6 +27,7 @@ from .smma import smma
 from .ssf import ssf
 from .ssf3 import ssf3
 from .supertrend import supertrend
+from .supres import supres
 from .swma import swma
 from .t3 import t3
 from .tema import tema
@@ -66,6 +67,7 @@ __all__ = [
     "ssf",
     "ssf3",
     "supertrend",
+    "supres",
     "swma",
     "t3",
     "tema",
