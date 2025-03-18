@@ -424,6 +424,13 @@ def test_supertrend(df):
     assert result.name == "SUPERT_7_3.0"
 
 
+# TODO
+def test_supres(df):
+    result = ta.supres(df.open, df.high, df.low, df.close)
+    assert isinstance(result, DataFrame)
+    assert result.name == "SUPERT_7_3.0"
+
+
 def test_t3(df):
     result = ta.t3(df.close, talib=False)
     assert isinstance(result, Series)
