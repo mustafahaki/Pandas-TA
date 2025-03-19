@@ -58,7 +58,7 @@ def vidya(
 
     if Imports["talib"] and mode_tal:
         from talib import CMO
-        cmo_ = CMO(close, length)
+        cmo_ = CMO(close, length) / 100
     else:
         cmo_ = _cmo(close, length, drift)
     abs_cmo = cmo_.abs().astype(float)
